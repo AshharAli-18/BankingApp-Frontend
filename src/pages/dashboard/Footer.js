@@ -39,7 +39,7 @@ export default function Footer() {
             <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-4' style={{color: '#ffffff'}}>
               <h6 className='text-uppercase fw-bold mb-4'>
                 <MDBIcon icon="gem" className="me-3" />
-                Company name
+                MetroBank
               </h6>
               <p>
                 Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
@@ -119,7 +119,7 @@ export default function Footer() {
       <div className='text-center p-4' style={{ color:'#ffffff' }}>
         © 2021 Copyright:
         <a className='text-reset fw-bold' href='https://mdbootstrap.com/'>
-          MDBootstrap.com
+          MetroBank.com
         </a>
       </div>
     </MDBFooter>
