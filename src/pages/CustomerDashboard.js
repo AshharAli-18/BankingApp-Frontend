@@ -198,11 +198,11 @@ export default function CustomerDashboard() {
             <AppNewsUpdate
               title="Notifications"
               list={[
-                { id: 1, title: 'Order Received', description: 'New order has been received.', image: '/components/covers/cover_1.jpg', postedAt: '2023-01-01' },
-                { id: 2, title: 'Product Shipped', description: 'Product has been shipped.', image: '/assets/images/covers/cover_2.jpg', postedAt: '2023-01-02' },
-                { id: 3, title: 'Payment Processed', description: 'Payment has been processed.', image: '/assets/images/covers/cover_3.jpg', postedAt: '2023-01-03' },
-                { id: 4, title: 'Customer Review', description: 'New customer review added.', image: '/assets/images/covers/cover_4.jpg', postedAt: '2023-01-04' },
-                { id: 5, title: 'Stock Replenished', description: 'Stock has been replenished.', image: '/assets/images/covers/cover_5.jpg', postedAt: '2023-01-05' },
+                { id: 1, title: 'Funds Transferred', description: 'Funds Transferred successfully.', image: '/components/covers/cover_1.jpg', postedAt: '2023-01-01' },
+                { id: 2, title: 'Funds Transferred', description: 'Funds Transferred successfully.', image: '/assets/images/covers/cover_2.jpg', postedAt: '2023-01-02' },
+                { id: 3, title: 'Limit Reached', description: 'Daily transfer limit is reached.', image: '/assets/images/covers/cover_3.jpg', postedAt: '2023-01-03' },
+                { id: 4, title: 'Funds Recieved', description: 'Funds Recieved successfully.', image: '/assets/images/covers/cover_4.jpg', postedAt: '2023-01-04' },
+                { id: 5, title: 'Funds Transferred', description: 'Funds Transferred successfully.', image: '/assets/images/covers/cover_5.jpg', postedAt: '2023-01-05' },
               ]}
               sx={{
                backgroundColor:"#f4f0ec"

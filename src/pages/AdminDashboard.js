@@ -17,7 +17,7 @@ import {
   AppTrafficBySite,
   AppWidgetSummary,
 } from '../sections/@dashboard/app';
-
+import { useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
@@ -46,6 +46,7 @@ export default function DashboardAppPage() {
     { orderdate: '2023-04-20', grandtotal: 2500, fname: 'David', status: 'completed' },
     { orderdate: '2023-05-15', grandtotal: 3000, fname: 'Eve', status: 'pending' },
   ]; // Dummy orders data
+  
 
   useEffect(() => {
     if (!orders.length) return;
@@ -79,7 +80,7 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl" >
       <Typography variant="h5" sx={{ mb: 5 }}>
-         <strong>Welcome <span style={{ color: 'grey' }}>{loginObject}</span> to the Admin Dashboard</strong> 
+         <strong>Welcome <span style={{ color: 'grey' }}>Usama</span> to the Admin Dashboard</strong> 
         </Typography>
 
         <Grid container spacing={3}>
@@ -155,11 +156,11 @@ export default function DashboardAppPage() {
             }}
               title="Notifications"
               list={[
-                { id: 1, title: 'Order Received', description: 'New order has been received.', image: '/assets/images/covers/cover_1.jpg', postedAt: '2023-01-01' },
-                { id: 2, title: 'Product Shipped', description: 'Product has been shipped.', image: '/assets/images/covers/cover_2.jpg', postedAt: '2023-01-02' },
-                { id: 3, title: 'Payment Processed', description: 'Payment has been processed.', image: '/assets/images/covers/cover_3.jpg', postedAt: '2023-01-03' },
-                { id: 4, title: 'Customer Review', description: 'New customer review added.', image: '/assets/images/covers/cover_4.jpg', postedAt: '2023-01-04' },
-                { id: 5, title: 'Stock Replenished', description: 'Stock has been replenished.', image: '/assets/images/covers/cover_5.jpg', postedAt: '2023-01-05' },
+                { id: 1, title: 'Request Received', description: 'New Request has been received.', image: '/assets/images/covers/cover_1.jpg', postedAt: '2023-01-01' },
+                { id: 2, title: 'Account Deleted', description: 'Account has been deleted succesfully.', image: '/assets/images/covers/cover_2.jpg', postedAt: '2023-01-02' },
+                { id: 3, title: 'Request Received', description: 'New Request has been received.', image: '/assets/images/covers/cover_3.jpg', postedAt: '2023-01-03' },
+                { id: 4, title: 'Account Edited', description: 'Account Edited successfully.', image: '/assets/images/covers/cover_4.jpg', postedAt: '2023-01-04' },
+                { id: 5, title: 'Account Edited', description: 'Account Edited successfully.', image: '/assets/images/covers/cover_5.jpg', postedAt: '2023-01-05' },
               ]}
             />
           </Grid>
