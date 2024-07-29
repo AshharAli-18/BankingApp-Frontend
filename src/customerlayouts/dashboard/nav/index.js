@@ -73,7 +73,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ flexGrow: 1 }} />
       
       {/* Logout button */}
-      <Box sx={{ mt: '120%',px: 2.5, pb: 3 }}>
+      <Box sx={{ mt: '130%',px: 2.5, pb: 3 }}>
         <Button variant="contained" fullWidth onClick={handleLogout} sx={{
           backgroundColor: '#e53935',
           '&:hover': {
@@ -130,10 +130,14 @@ export default function Nav({ openNav, onCloseNav }) {
           Are you sure you want to logout?
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelLogout} color="primary">
+          <Button onClick={handleCancelLogout} sx={{
+            color:"#e53935"
+          }}>
             Cancel
           </Button>
-          <Button onClick={handleConfirmLogout} color="primary">
+          <Button onClick={handleConfirmLogout} sx={{
+            color:"#e53935"
+          }}>
             Confirm
           </Button>
         </DialogActions>

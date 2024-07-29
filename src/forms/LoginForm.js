@@ -99,7 +99,7 @@ export default function LoginForm() {
         </TextField>
         <TextField
           name="email"
-          label="Phone number"
+          label="Email"
           value={values.email}
           onChange={handleInput}
         />
