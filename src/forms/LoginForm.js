@@ -57,9 +57,7 @@ export default function LoginForm() {
       if (loggedInCustomer.loggedIn && loggedInCustomer.token) {
         if (values.role === 'user') {
           navigate('/customerlayout/customerdashboard');
-        } else {
-          alert('Invalid Role!');
-        }
+        } 
       } else {
         alert('Invalid Credentials!');
       }
@@ -71,9 +69,7 @@ export default function LoginForm() {
       if (loggedInAdmin.loggedIn && loggedInAdmin.token) {
         if (values.role === 'admin') {
           navigate('/adminlayout/admindashboard');
-        } else {
-          alert('Invalid Role!');
-        }
+        } 
       } else {
         alert('Invalid Credentials!');
       }
