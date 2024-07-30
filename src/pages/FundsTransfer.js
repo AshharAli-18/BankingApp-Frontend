@@ -1,22 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   FormGroup,
   FormControl,
   TextField,
-  InputAdornment,
   InputLabel,
   Box,
-  Paper,
-  Typography,
-  IconButton,
   Button,
   MenuItem,
+  IconButton,
 } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LinearProgress from '@mui/material/LinearProgress';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -38,32 +32,16 @@ const useStyle = makeStyles({
   fieldStyle1: {
     display: 'flex',
   },
-  labestyle: {
-    paddingTop: '8px',
-  },
-  uploadlabestyle: {
-    paddingBottom: '20px',
-  },
   selectStyle: {
     marginTop: 12,
-  },
-  uploadinputBox: {
-    border: '1px solid #ccc',
-    borderRadius: 4,
-    paddingTop: '20px',
-    width: '100%',
   },
   buttonstyle: {
     marginTop: 20,
   },
-  inputsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
 });
 
 const accTypes = ['Account Number'];
-const purposes = ['Other', 'Educational payments', 'loan'];
+const purposes = ['Other', 'Educational payments', 'Loan'];
 
 function FundsTransfer() {
   const classes = useStyle();
@@ -74,36 +52,47 @@ function FundsTransfer() {
     amount: '',
     purpose: '',
   });
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpRequested, setOtpRequested] = useState(false);
 
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(0);
-  const [effectProgress, setEffectProgress] = useState(0);
+  const loggedInCustomer = useSelector((state) => state.customerloginuser.user);
+  const userId = loggedInCustomer.userId;
+  const email = loggedInCustomer.email;
+  const token = loggedInCustomer.token;
+  const API_BASE_URL = 'http://localhost:8080/api';
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const loggedInCustomer = useSelector((state) => state.customerloginuser.user);
-  const userId = loggedInCustomer.userId;
-  const token = loggedInCustomer.token;
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+  };
 
-  const API_BASE_URL = 'http://localhost:8080/api';
+  const requestOtp = async () => {
 
-  const fetchAccountId = async (userId, token) => {
-    console.log("token is:", token);
-    console.log("user id is:", userId);
     try {
-      const response = await fetch(`${API_BASE_URL}/getAccoutByUserId/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/requestOtp`, {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ email }), // Assuming you send userId to request OTP
       });
-      if (!response.ok) throw new Error('Failed to fetch account ID');
-      const data = await response.json();
-      return data.accountId; // Adjust this based on your API response
+
+      if (response.status === 200) {
+        toast.success('OTP requested successfully');
+        setOtpRequested(true);
+        setShowOtpField(true);
+      } else {
+        const errorData = await response.json();
+        toast.error(`Failed to request OTP: ${errorData.message}`);
+      }
     } catch (error) {
-      toast.error(error.message);
-      return null;
+      toast.error('Failed to request OTP: Network error');
     }
   };
 
@@ -136,22 +125,36 @@ function FundsTransfer() {
   };
 
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const accountId = await fetchAccountId(userId, token);
-    
+
     if (accountId) {
       const requestBody = {
         fromAccountId: accountId,
         toAccountNumber: formData.accountnumber,
         amount: parseFloat(formData.amount),
+        email: loggedInCustomer.email,
+        otp: formData.otp,
       };
-    console.log("request body is:", requestBody);
-    performTransaction(requestBody, token);
+      performTransaction(requestBody, token);
     }
-    
-    
+  };
+
+  const fetchAccountId = async (userId, token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/getAccoutByUserId/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch account ID');
+      const data = await response.json();
+      return data.accountId;
+    } catch (error) {
+      toast.error(error.message);
+      return null;
+    }
   };
 
   const goBack = () => {
@@ -253,19 +256,51 @@ function FundsTransfer() {
               </TextField>
             </FormControl>
 
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                mt: 3,
-                backgroundColor: '#e53935',
-                '&:hover': {
+            {!otpRequested && (
+              <Button
+                type="button"
+                variant="contained"
+                sx={{
+                  mt: 3,
                   backgroundColor: '#e53935',
-                },
-              }}
-            >
-              Transfer
-            </Button>
+                  '&:hover': {
+                    backgroundColor: '#e53935',
+                  },
+                }}
+                onClick={requestOtp}
+              >
+                Request OTP
+              </Button>
+            )}
+
+            {showOtpField && (
+              <>
+                <FormControl className={classes.fieldStyle}>
+                <TextField
+                  id="outlined-basic"
+                  label="Enter OTP"
+                  variant="outlined"
+                  name="otp"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  required
+                />
+                </FormControl>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    mt: 3,
+                    backgroundColor: '#e53935',
+                    '&:hover': {
+                      backgroundColor: '#e53935',
+                    },
+                  }}
+                >
+                  Transfer
+                </Button>
+              </>
+            )}
           </FormGroup>
         </form>
       </div>
