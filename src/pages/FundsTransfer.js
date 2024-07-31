@@ -41,7 +41,7 @@ const useStyle = makeStyles({
 });
 
 const accTypes = ['Account Number'];
-const purposes = ['Other', 'Educational payments', 'Loan'];
+const purposes = ['Other', 'Educational payments', 'Loan payments'];
 
 function FundsTransfer() {
   const classes = useStyle();
@@ -84,7 +84,7 @@ function FundsTransfer() {
       });
 
       if (response.status === 200) {
-        toast.success('OTP requested successfully');
+        toast.success('OTP sent successfully');
         setOtpRequested(true);
         setShowOtpField(true);
       } else {

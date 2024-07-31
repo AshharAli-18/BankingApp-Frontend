@@ -22,6 +22,8 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
 
 
@@ -189,8 +191,8 @@ const fetchAccountId = async (userId, token) => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <strong>Cr/Db{' '}</strong>
+                    <div style={{ display: 'flex', alignItems: 'right' }}>
+                      <strong>CR/DB</strong>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -211,7 +213,9 @@ const fetchAccountId = async (userId, token) => {
                       </TableCell>
                       <TableCell align="left">{amount}</TableCell>
                       <TableCell align="left">{date}</TableCell>
-                      <TableCell align="left">{creditDebit}</TableCell>
+                      <TableCell align="left">
+      {creditDebit === 'CR' ? <TrendingDownIcon color='success'/> : <TrendingUpIcon color='error'/>}
+    </TableCell>
                     </TableRow>
                   );
                 })}

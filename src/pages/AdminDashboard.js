@@ -74,10 +74,7 @@ export default function DashboardAppPage() {
 
   return (
     <>
-      {/* <Helmet>
-        <title> Admin Dashboard </title>
-      </Helmet> */}
-
+      
       <Container maxWidth="xl" >
       <Typography variant="h5" sx={{ mb: 5 }}>
          <strong>Welcome <span style={{ color: 'grey' }}>Usama</span> to the Admin Dashboard</strong> 
@@ -115,7 +112,7 @@ export default function DashboardAppPage() {
             <AppWebsiteVisits sx={{
             backgroundColor: "#f4f0ec"
           }}
-              title="Revenue Status"
+              title="Customers Status"
               subheader="Monthly Progress"
               chartLabels={chartLabels}
               chartData={[

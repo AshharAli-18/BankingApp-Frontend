@@ -219,6 +219,7 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="phone"
+                  type="number"
                   label="Phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -263,6 +264,7 @@ function EditAccount() {
                   variant="outlined"
                   name="balance"
                   label="Balance"
+                  type="number"
                   value={formData.balance}
                   onChange={(e) => setFormData({ ...formData, balance: e.target.value })}
                   required

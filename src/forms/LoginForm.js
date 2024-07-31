@@ -95,7 +95,7 @@ export default function LoginForm() {
         </TextField>
         <TextField
           name="email"
-          label="email"
+          label="Email"
           value={values.email}
           onChange={handleInput}
         />
