@@ -3,12 +3,6 @@ import {
   FormGroup,
   FormControl,
   TextField,
-  InputAdornment,
-  InputLabel,
-  Box,
-  Paper,
-  Typography,
-  IconButton,
   Button,
   MenuItem,
 } from '@mui/material';
@@ -35,27 +29,8 @@ const useStyle = makeStyles({
   fieldStyle1: {
     display: 'flex',
   },
-  labestyle: {
-    paddingTop: '8px',
-  },
-  uploadlabestyle: {
-    paddingBottom: '20px',
-  },
   selectStyle: {
     marginTop: 12,
-  },
-  uploadinputBox: {
-    border: '1px solid #ccc',
-    borderRadius: 4,
-    paddingTop: '20px',
-    width: '100%',
-  },
-  buttonstyle: {
-    marginTop: 20,
-  },
-  inputsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
   },
 });
 
@@ -69,6 +44,17 @@ function EditAccount() {
     email: '',
     phone: '',
     accountType: '',
+    address: '',
+    cnic: '',
+    balance: '',
+  });
+  
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    cnic: '',
+    phone: '',
+    balance: '',
   });
 
   const navigate = useNavigate();
@@ -93,11 +79,7 @@ function EditAccount() {
         }
 
         const result = await response.json();
-        console.log("result is:",result);
         setAccount(result);
-
-
-        // Update form data immediately after setting account data
         setFormData({
           name: result.user.name || '',
           username: result.user.username || '',
@@ -118,46 +100,97 @@ function EditAccount() {
     fetchAccount();
   }, [accountId, token]);
 
+  const validateForm = () => {
+    let valid = true;
+    let tempErrors = { ...errors };
+
+    // Name validation
+    if (/\d/.test(formData.name)) {
+      tempErrors.name = 'Invalid Name';
+      valid = false;
+    } else {
+      tempErrors.name = '';
+    }
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      tempErrors.email = 'Invalid Email Address';
+      valid = false;
+    } else {
+      tempErrors.email = '';
+    }
+
+    // CNIC validation
+    const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
+    if (!cnicPattern.test(formData.cnic)) {
+      tempErrors.cnic = 'Invalid CNIC';
+      valid = false;
+    } else {
+      tempErrors.cnic = '';
+    }
+
+    // Phone validation
+    if (/[a-zA-Z]/.test(formData.phone)) {
+      tempErrors.phone = 'Phone number should not contain alphabets';
+      valid = false;
+    } else {
+      tempErrors.phone = '';
+    }
+
+    // Balance validation
+    if (isNaN(formData.balance) || formData.balance < 0) {
+      tempErrors.balance = 'Balance must be a non-negative number';
+      valid = false;
+    } else {
+      tempErrors.balance = '';
+    }
+
+    setErrors(tempErrors);
+    return valid;
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    try {
-      const response = await fetch(`http://localhost:8080/api/admin/updateAccount/${accountId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      console.log("response :", response);
-      // Check if the response is empty
-      if (response.status === 200) {
-        toast.success('Account updated successfully');
-        navigate(-1);
-        return;
-      }
-  
-      // Check if the response is valid JSON
-      const contentType = response.headers.get('Content-Type');
-      if (contentType && contentType.includes('application/json')) {
-        const result = await response.json();
-        console.log('Account updated successfully:', result);
-        toast.success('Account updated successfully');
-        navigate(-1);
-      } else {
-        // Handle non-JSON responses
-        const text = await response.text();
-        console.error('Unexpected response format:', text);
+    if (validateForm()) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/admin/updateAccount/${accountId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.status === 200) {
+          toast.success('Account updated successfully');
+          navigate(-1);
+          return;
+        }
+
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          const result = await response.json();
+          toast.success('Account updated successfully');
+          navigate(-1);
+        } else {
+          const text = await response.text();
+          console.error('Unexpected response format:', text);
+          toast.error('Failed to update account');
+        }
+      } catch (error) {
+        console.error('Error updating account:', error);
         toast.error('Failed to update account');
       }
-    } catch (error) {
-      console.error('Error updating account:', error);
-      toast.error('Failed to update account');
     }
   };
-  
+
   const goback = () => {
     navigate(-1);
   };
@@ -183,10 +216,11 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="name"
-                  label="Name"
+                  label={errors.name ? errors.name : "Name"}
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleChange}
                   required
+                  error={Boolean(errors.name)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -196,7 +230,7 @@ function EditAccount() {
                   name="username"
                   label="Username"
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={handleChange}
                   required
                 />
               </FormControl>
@@ -208,10 +242,11 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="email"
-                  label="Email"
+                  label={errors.email ? errors.email : "Email"}
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={handleChange}
                   required
+                  error={Boolean(errors.email)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -219,21 +254,22 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="phone"
-                  type="number"
-                  label="Phone"
+                  label={errors.phone ? errors.phone : "Phone"}
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={handleChange}
                   required
+                  error={Boolean(errors.phone)}
                 />
               </FormControl>
             </div>
+
             <FormControl className={classes.selectStyle}>
               <TextField
                 select
-                name="accounttype"
+                name="accountType"
                 label="Account Type"
                 value={formData.accountType}
-                onChange={(e) => setFormData({ ...formData, accountType: e.target.value })}
+                onChange={handleChange}
                 helperText="Please select the type of account"
               >
                 {accTypes.map((accountType) => (
@@ -244,18 +280,17 @@ function EditAccount() {
               </TextField>
             </FormControl>
 
-           
-          
             <div className={classes.fieldStyle1}>
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
                   variant="outlined"
                   name="cnic"
-                  label="CNIC"
+                  label={errors.cnic ? errors.cnic : "CNIC"}
                   value={formData.cnic}
-                  onChange={(e) => setFormData({ ...formData, cnic: e.target.value })}
+                  onChange={handleChange}
                   required
+                  error={Boolean(errors.cnic)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -263,11 +298,12 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="balance"
-                  label="Balance"
+                  label={errors.balance ? errors.balance : "Balance"}
                   type="number"
                   value={formData.balance}
-                  onChange={(e) => setFormData({ ...formData, balance: e.target.value })}
+                  onChange={handleChange}
                   required
+                  error={Boolean(errors.balance)}
                 />
               </FormControl>
             </div>
@@ -278,13 +314,14 @@ function EditAccount() {
                 variant="outlined"
                 name="address"
                 label="Address"
+                value={formData.address}
+                onChange={handleChange}
                 multiline
                 rows={4}
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                required
               />
             </FormControl>
-
+            
             <Button type="submit" variant="contained" sx={{
               mt: 3,
               backgroundColor: "#e53935",

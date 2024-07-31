@@ -51,10 +51,15 @@ function FundsTransfer() {
     accountnumber: '',
     amount: '',
     purpose: '',
+    otp: '', // Added OTP field to formData
   });
   const [showOtpField, setShowOtpField] = useState(false);
   const [otp, setOtp] = useState('');
   const [otpRequested, setOtpRequested] = useState(false);
+  const [errors, setErrors] = useState({
+    accountnumber: '',
+    amount: '',
+  });
 
   const navigate = useNavigate();
   const loggedInCustomer = useSelector((state) => state.customerloginuser.user);
@@ -71,28 +76,53 @@ function FundsTransfer() {
     setOtp(e.target.value);
   };
 
+  const validateForm = () => {
+    let valid = true;
+    let tempErrors = { ...errors };
+
+    // Account number validation
+    if (formData.accountnumber.length < 14) {
+      tempErrors.accountnumber = 'Account number must be at least 14 characters long';
+      valid = false;
+    } else {
+      tempErrors.accountnumber = '';
+    }
+
+    // Amount validation
+    if (parseFloat(formData.amount) <= 0) {
+      tempErrors.amount = 'Amount must be greater than zero';
+      valid = false;
+    } else {
+      tempErrors.amount = '';
+    }
+
+    setErrors(tempErrors);
+    return valid;
+  };
+
   const requestOtp = async () => {
+    if (validateForm()) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/requestOtp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email }), // Assuming you send userId to request OTP
+        });
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/requestOtp`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email }), // Assuming you send userId to request OTP
-      });
-
-      if (response.status === 200) {
-        toast.success('OTP sent successfully');
-        setOtpRequested(true);
-        setShowOtpField(true);
-      } else {
-        const errorData = await response.json();
-        toast.error(`Failed to request OTP: ${errorData.message}`);
+        if (response.status === 200) {
+          toast.success('OTP sent successfully');
+          setOtpRequested(true);
+          setShowOtpField(true);
+        } else {
+          const errorData = await response.json();
+          toast.error(`Failed to request OTP: ${errorData.message}`);
+        }
+      } catch (error) {
+        toast.error('Failed to request OTP: Network error');
       }
-    } catch (error) {
-      toast.error('Failed to request OTP: Network error');
     }
   };
 
@@ -123,7 +153,6 @@ function FundsTransfer() {
       toast.error('Transfer failed: Network error');
     }
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -218,23 +247,25 @@ function FundsTransfer() {
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
-                  label="Account Number"
+                  label={errors.accountnumber ? errors.accountnumber : "Account Number"}
                   variant="outlined"
                   name="accountnumber"
                   value={formData.accountnumber}
                   onChange={handleChange}
                   required
+                  error={Boolean(errors.accountnumber)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
-                  label="Amount"
+                  label={errors.amount ? errors.amount : "Amount"}
                   variant="outlined"
                   name="amount"
                   value={formData.amount}
                   onChange={handleChange}
                   required
+                  error={Boolean(errors.amount)}
                 />
               </FormControl>
             </div>
@@ -276,15 +307,15 @@ function FundsTransfer() {
             {showOtpField && (
               <>
                 <FormControl className={classes.fieldStyle}>
-                <TextField
-                  id="outlined-basic"
-                  label="Enter OTP"
-                  variant="outlined"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  required
-                />
+                  <TextField
+                    id="outlined-basic"
+                    label="Enter OTP"
+                    variant="outlined"
+                    name="otp"
+                    value={formData.otp}
+                    onChange={handleChange}
+                    required
+                  />
                 </FormControl>
                 <Button
                   type="submit"

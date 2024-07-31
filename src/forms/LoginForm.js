@@ -4,86 +4,89 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Stack, IconButton, InputAdornment, TextField, MenuItem } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import Iconify from '../components/iconify';
-import { customerloginRequest } from '../redux/actions';
-import { adminloginRequest } from '../redux/actions';
+import { customerloginRequest, adminloginRequest } from '../redux/actions';
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); // State to track loading state
-  const [error, setError] = useState(''); // State to display error messages
-  const dispach= useDispatch();
-  const navigate=useNavigate();
-    
-  // const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [values, setValues] = useState({
     email: '',
     password: '',
     role: '',
   });
 
-  const handleInput = (event) => {
-    setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
-  }
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit  = async (event) => {
-   
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setValues(prev => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    let tempEmailError = '';
+
+    // Email validation
+    if (values.email) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(values.email)) {
+        tempEmailError = 'Invalid email address';
+        valid = false;
+      }
+    } else {
+      tempEmailError = 'Email is required';
+      valid = false;
+    }
+
+    setEmailError(tempEmailError);
+    return valid;
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true); // Set loading state to true while request is being processed
-  
-    try {
-      if (values.role === 'user') {
-      await dispach(customerloginRequest(values.email, values.password)); // Pass phone and password separately
-      }
-      if (values.role === 'admin') {
-        await dispach(adminloginRequest(values.email, values.password)); // Pass phone and password separately
-      }
-   
-    } catch (error) {
-      setError('An error occurred while logging in.'); // Handle any errors that occur during login
-    } finally {
-      setLoading(false); // Reset loading state regardless of success or failure
+    
+
+    if (validateForm()) {
+      try {
+        if (values.role === 'user') {
+          await dispatch(customerloginRequest(values.email, values.password));
+        } else if (values.role === 'admin') {
+          await dispatch(adminloginRequest(values.email, values.password));
+        }
+      } catch (error) {
+        setError('An error occurred while logging in.');
+      } 
     }
   };
 
-  const  loggedInCustomer = useSelector(state => state.customerloginuser.user);
-  const  loggedInAdmin = useSelector(state => state.adminloginuser.admin);
+  const loggedInCustomer = useSelector(state => state.customerloginuser.user);
+  const loggedInAdmin = useSelector(state => state.adminloginuser.admin);
+
   useEffect(() => {
-    if (loggedInCustomer) {
-      // console.log("user is:", loginObject.Login);
-      console.log("user is:", loggedInCustomer);
-  
-      // After dispatching the login request, check if login was successful
-      if (loggedInCustomer.loggedIn && loggedInCustomer.token) {
-        if (values.role === 'user') {
-          navigate('/customerlayout/customerdashboard');
-        } 
+    if (loggedInCustomer && loggedInCustomer.loggedIn && loggedInCustomer.token) {
+      if (values.role === 'user') {
+        navigate('/customerlayout/customerdashboard');
       } else {
         alert('Invalid Credentials!');
       }
     }
-  
-    if (loggedInAdmin) {
-      console.log("admin is:", loggedInAdmin);
-  
-      if (loggedInAdmin.loggedIn && loggedInAdmin.token) {
-        if (values.role === 'admin') {
-          navigate('/adminlayout/admindashboard');
-        } 
+
+    if (loggedInAdmin && loggedInAdmin.loggedIn && loggedInAdmin.token) {
+      if (values.role === 'admin') {
+        navigate('/adminlayout/admindashboard');
       } else {
         alert('Invalid Credentials!');
       }
     }
-  }, [loggedInCustomer, loggedInAdmin]);
-  
+  }, [loggedInCustomer, loggedInAdmin, values.role, navigate]);
 
   return (
     <>
-
-
-      
       <Stack spacing={3}>
-      <TextField
+        <TextField
           name="role"
           label="Role"
           value={values.role}
@@ -93,11 +96,13 @@ export default function LoginForm() {
           <MenuItem value="admin">Admin</MenuItem>
           <MenuItem value="user">User</MenuItem>
         </TextField>
+
         <TextField
           name="email"
-          label="Email"
+          label={emailError ? emailError : "Email"}
           value={values.email}
           onChange={handleInput}
+          error={Boolean(emailError)}
         />
 
         <TextField
@@ -116,9 +121,7 @@ export default function LoginForm() {
             ),
           }}
         />
-
-</Stack>
-      
+      </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Link variant="subtitle2" underline="hover" sx={{ color: "#e53935" }}>

@@ -11,9 +11,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-
 
 const useStyle = makeStyles({
   formStyle: {
@@ -57,74 +56,125 @@ const useStyle = makeStyles({
 
 const accformat = ['Saving', 'Current'];
 
-
-
 function AddCustomer() {
-
   const classes = useStyle();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+  const loggedInAdmin = useSelector(state => state.adminloginuser.admin);
+  const token = loggedInAdmin.token;
 
-  const  loggedInAdmin = useSelector(state => state.adminloginuser.admin);
-  
-  const token=loggedInAdmin.token;
-  
   useEffect(() => {
     console.log("Logged In Admin is:", loggedInAdmin);
-   
-   
-  }, []);
-  
+  }, [loggedInAdmin]);
+
   const [formData, setFormData] = useState({
     name: '',
     username: '',
     email: '',
+    cnic: '',
+    password: '',
+    phone: '',
+    address: '',
+    accountType: ''
   });
 
-  const handleChange = event => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  
-};
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    cnic: '',
+    password: '',
+    phone: ''
+  });
 
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
+  const validateForm = () => {
+    let valid = true;
+    let tempErrors = { ...errors };
+
+    // Name validation
+    if (/\d/.test(formData.name)) {
+      tempErrors.name = 'Invalid Name';
+      valid = false;
+    } else {
+      tempErrors.name = '';
+    }
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      tempErrors.email = 'Invalid Email Address';
+      valid = false;
+    } else {
+      tempErrors.email = '';
+    }
+
+    // CNIC validation
+    const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
+    if (!cnicPattern.test(formData.cnic)) {
+      tempErrors.cnic = 'Invalid CNIC';
+      valid = false;
+    } else {
+      tempErrors.cnic = '';
+    }
+
+    // Password validation
+    if (formData.password.length < 8) {
+      tempErrors.password = 'Password must be at least 8 characters long';
+      valid = false;
+    } else {
+      tempErrors.password = '';
+    }
+
+    // Phone validation
+    if (/[a-zA-Z]/.test(formData.phone)) {
+      tempErrors.phone = 'Phone number should not contain alphabets';
+      valid = false;
+    } else {
+      tempErrors.phone = '';
+    }
+
+    setErrors(tempErrors);
+    return valid;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/admin/createAccount',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+    if (validateForm()) {
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/admin/createAccount',
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
+        );
+
+        console.log("response status is:", response.status);
+        if (response.status === 200) {
+          toast.success('Account created successfully');
+          setTimeout(() => {
+            navigate(-1);
+          }, 2000);
+        } else {
+          toast.error('Failed to create account');
         }
-      );
-  
-      // Check if response status is OK
-      console.log("response status is:", response.status);
-      if (response.status === 200) {
-        toast.success('Account created successfully');
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
-      } else {
-        // Handle unexpected status codes
-        toast.error('Failed to create account');
+      } catch (error) {
+        if (error.response) {
+          const errorMessage = error.response.data.message || 'An error occurred';
+          toast.error(errorMessage);
+        } else {
+          toast.error('Network or server error');
+        }
+        console.error('Error:', error);
       }
-    } catch (error) {
-      // Check if the error has a response and handle it
-      if (error.response) {
-        const errorMessage = error.response.data.message || 'An error occurred';
-        toast.error(errorMessage);
-      } else {
-        toast.error('Network or server error');
-      }
-      console.error('Error:', error);
     }
   };
-  
 
   const goback = () => {
     navigate(-1);
@@ -137,13 +187,9 @@ function AddCustomer() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', marginLeft: '90px', marginRight: '90px' }}>
-        
-          <ArrowBackIosIcon onClick={goback} />
-       
+        <ArrowBackIosIcon onClick={goback} />
         <h3 style={{ marginLeft: '10px', fontWeight: 'bold', fontSize: '24px' }}>Add New Customer</h3>
-        
-          <ArrowForwardIosIcon onClick={goforward} />
-        
+        <ArrowForwardIosIcon onClick={goforward} />
       </div>
 
       <div>
@@ -153,12 +199,12 @@ function AddCustomer() {
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
-                  label="Name"
+                  label={errors.name ? errors.name : "Name"}
                   variant="outlined"
                   name="name"
-                 
                   onChange={handleChange}
                   required
+                  error={Boolean(errors.name)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -177,66 +223,60 @@ function AddCustomer() {
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
-                  label="Email"
+                  label={errors.email ? errors.email : "Email"}
                   variant="outlined"
                   name="email"
                   onChange={handleChange}
-                  required />
-
+                  required
+                  error={Boolean(errors.email)}
+                />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
                 <TextField
                   id="outlined-basic"
-                  label="Cnic"
+                  label={errors.cnic ? errors.cnic : "CNIC"}
                   variant="outlined"
                   name="cnic"
                   onChange={handleChange}
                   required
-                   />
+                  error={Boolean(errors.cnic)}
+                />
               </FormControl>
             </div>
             <FormControl className={classes.selectStyle}>
-
               <TextField
                 select
                 label="AccountType"
                 name="accountType"
                 onChange={handleChange}
                 helperText="Please select the type of account"
-
               >
-                {accformat.map((accformat) => (
-                  <MenuItem key={accformat} value={accformat}>
-                    {accformat}
+                {accformat.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
                   </MenuItem>
                 ))}
               </TextField>
             </FormControl>
 
             <FormControl className={classes.selectStyle}>
-
               <TextField
-      
-                label="Password"
+                label={errors.password ? errors.password : "Password"}
                 name="password"
+                type="password"
                 onChange={handleChange}
-
-              >
-              </TextField>
+                error={Boolean(errors.password)}
+              />
             </FormControl>
 
             <FormControl className={classes.selectStyle}>
-
               <TextField
-
-                label="Phone"
-                name="phoneNumber"
+                label={errors.phone ? errors.phone : "Phone"}
+                name="phone"
                 onChange={handleChange}
-
-              >
-              </TextField>
-              </FormControl>
-          
+                error={Boolean(errors.phone)}
+              />
+            </FormControl>
 
             <FormControl className={classes.fieldStyle}>
               <TextField
@@ -246,18 +286,21 @@ function AddCustomer() {
                 name="address"
                 onChange={handleChange}
                 multiline
-                rows={4} />
+                rows={4}
+              />
             </FormControl>
 
-
-        
-            <Button type="submit" variant="contained" sx={{
-              mt: 3,
-              backgroundColor: "#e53935",
-              '&:hover': {
-                backgroundColor: "#e53935", 
-              }
-            }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                mt: 3,
+                backgroundColor: "#e53935",
+                '&:hover': {
+                  backgroundColor: "#e53935",
+                }
+              }}
+            >
               Add Customer
             </Button>
           </FormGroup>
@@ -266,6 +309,5 @@ function AddCustomer() {
     </>
   );
 }
-
 
 export default AddCustomer;
