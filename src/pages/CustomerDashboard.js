@@ -57,27 +57,28 @@ export default function CustomerDashboard() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/getAccoutByUserId/${userId}`, {
+        const response = await fetch(`http://localhost:8080/api/getAccountByUserId/${userId}`, { // Corrected spelling here
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
-
+    
+        console.log("response is :", response);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
+    
         const result = await response.json();
         setData(result);
         console.log("result is:", result); // Log result after setting state
-
+    
       } catch (error) {
         console.error('Error fetching account:', error);
       }
     };
-
+    
     fetchData();
   }, [token, userId, loggedInCustomer]);
 

@@ -73,7 +73,7 @@ function AddCustomer() {
     email: '',
     cnic: '',
     password: '',
-    phone: '',
+    phoneNumber: '',
     address: '',
     accountType: ''
   });
@@ -83,7 +83,7 @@ function AddCustomer() {
     email: '',
     cnic: '',
     password: '',
-    phone: ''
+    phoneNumber: ''
   });
 
   const handleChange = (event) => {
@@ -129,12 +129,12 @@ function AddCustomer() {
       tempErrors.password = '';
     }
 
-    // Phone validation
-    if (/[a-zA-Z]/.test(formData.phone)) {
-      tempErrors.phone = 'Phone number should not contain alphabets';
+    // phoneNumber validation
+    if (/[a-zA-Z]/.test(formData.phoneNumber)) {
+      tempErrors.phoneNumber = 'Phone number should not contain alphabets';
       valid = false;
     } else {
-      tempErrors.phone = '';
+      tempErrors.phoneNumber = '';
     }
 
     setErrors(tempErrors);
@@ -144,6 +144,8 @@ function AddCustomer() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
+
+      console.log("FormData is :", formData);
       try {
         const response = await axios.post(
           'http://localhost:8080/api/admin/createAccount',
@@ -173,7 +175,7 @@ function AddCustomer() {
         }
         console.error('Error:', error);
       }
-    }
+     }
   };
 
   const goback = () => {
@@ -271,10 +273,10 @@ function AddCustomer() {
 
             <FormControl className={classes.selectStyle}>
               <TextField
-                label={errors.phone ? errors.phone : "Phone"}
-                name="phone"
+                label={errors.phoneNumber ? errors.phoneNumber : "Phone"}
+                name="phoneNumber"
                 onChange={handleChange}
-                error={Boolean(errors.phone)}
+                error={Boolean(errors.phoneNumber)}
               />
             </FormControl>
 

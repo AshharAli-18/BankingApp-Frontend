@@ -55,7 +55,7 @@ function Registration() {
     email: '',
     cnic: '',
     password: '',
-    phone: '',
+    phoneNumber: '',
     address: '',
     accountType: '',
   });
@@ -65,7 +65,7 @@ function Registration() {
     email: '',
     cnic: '',
     password: '',
-    phone: '',
+    phoneNumber: '',
   });
 
   const handleChange = event => {
@@ -111,15 +111,15 @@ function Registration() {
       tempErrors.password = '';
     }
 
-    // Phone validation
-    if (/[a-zA-Z]/.test(formData.phone)) {
-      tempErrors.phone = 'Phone number should not contain alphabets';
+    // phoneNumber validation
+    if (/[a-zA-Z]/.test(formData.phoneNumber)) {
+      tempErrors.phoneNumber = 'Phone number should not contain alphabets';
       valid = false;
-    }else if (formData.phone.length < 10) {
-      tempErrors.phone = 'Password must be at least 10 characters long';
+    }else if (formData.phoneNumber.length < 10) {
+      tempErrors.phoneNumber = 'Password must be at least 10 characters long';
       valid = false;
     } else {
-      tempErrors.phone = '';
+      tempErrors.phoneNumber = '';
     }
 
     setErrors(tempErrors);
@@ -129,6 +129,7 @@ function Registration() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
+      console.log("Formdata is:", formData);
       try {
         const response = await axios.post(
           'http://localhost:8080/api/auth/customerRequest',
@@ -266,10 +267,10 @@ function Registration() {
               <FormControl className={classes.selectStyle}>
                 <TextField
                   className={classes.fieldWidth}
-                  label={errors.phone ? errors.phone : "Phone"}
-                  name="phone"
+                  label={errors.phoneNumber ? errors.phoneNumber : "Phone"}
+                  name="phoneNumber"
                   onChange={handleChange}
-                  error={Boolean(errors.phone)}
+                  error={Boolean(errors.phoneNumber)}
                 />
               </FormControl>
 
