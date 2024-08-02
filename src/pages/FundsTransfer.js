@@ -81,8 +81,8 @@ function FundsTransfer() {
     let tempErrors = { ...errors };
 
     // Account number validation
-    if (formData.accountnumber.length < 14) {
-      tempErrors.accountnumber = 'Account number must be at least 14 characters long';
+    if (formData.accountnumber.length < 10) {
+      tempErrors.accountnumber = 'Account number must be at least 10 characters long';
       valid = false;
     } else {
       tempErrors.accountnumber = '';

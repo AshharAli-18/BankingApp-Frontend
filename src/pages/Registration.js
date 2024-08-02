@@ -11,11 +11,10 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import useResponsive from '../hooks/useResponsive';
-import LoginImage from '../components/images/LoginImage.jpg';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useResponsive from '../hooks/useResponsive';
+import LoginImage from '../components/images/LoginImage.jpg';
 
 const useStyle = makeStyles({
   formStyle: {
@@ -36,11 +35,11 @@ const useStyle = makeStyles({
   selectStyle: {
     display: 'flex',
     marginTop: 10,
-    width: '98.5%'
+    width: '98.5%',
   },
-  // fieldWidth: {
-  //   width: '100%', // Ensures all fields take the full width of the parent container
-  // },
+  fieldWidth: {
+    width: '100%',
+  },
 });
 
 const accformat = ['Saving', 'Current'];
@@ -48,57 +47,121 @@ const accformat = ['Saving', 'Current'];
 function Registration() {
   const classes = useStyle();
   const mdUp = useResponsive('up', 'md');
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   const [formData, setFormData] = useState({
     name: '',
     username: '',
     email: '',
+    cnic: '',
+    password: '',
+    phone: '',
+    address: '',
+    accountType: '',
+  });
+
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    cnic: '',
+    password: '',
+    phone: '',
   });
 
   const handleChange = event => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    let tempErrors = { ...errors };
+
+    // Name validation
+    if (/\d/.test(formData.name)) {
+      tempErrors.name = 'Invalid Name';
+      valid = false;
+    } else {
+      tempErrors.name = '';
+    }
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      tempErrors.email = 'Invalid Email Address';
+      valid = false;
+    } else {
+      tempErrors.email = '';
+    }
+
+    // CNIC validation
+    const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
+    if (!cnicPattern.test(formData.cnic)) {
+      tempErrors.cnic = 'Invalid CNIC';
+      valid = false;
+    } else {
+      tempErrors.cnic = '';
+    }
+
+    // Password validation
+    if (formData.password.length < 8) {
+      tempErrors.password = 'Password must be at least 8 characters long';
+      valid = false;
+    } else {
+      tempErrors.password = '';
+    }
+
+    // Phone validation
+    if (/[a-zA-Z]/.test(formData.phone)) {
+      tempErrors.phone = 'Phone number should not contain alphabets';
+      valid = false;
+    }else if (formData.phone.length < 10) {
+      tempErrors.phone = 'Password must be at least 10 characters long';
+      valid = false;
+    } else {
+      tempErrors.phone = '';
+    }
+
+    setErrors(tempErrors);
+    return valid;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    console.log("Form data is :", formData);
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/customerRequest',
-        formData
-      );
+    if (validateForm()) {
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/auth/customerRequest',
+          formData
+        );
   
-      // Check if response status is OK
-      console.log("response status is:", response.status);
-      if (response.status === 200) {
-        toast.success('Request sent successfully!');
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
-      } else {
-        // Handle unexpected status codes
-        toast.error('Failed to send request');
+        console.log("response status is:", response.status);
+        if (response.status === 200) {
+          toast.success('Request sent successfully!');
+          setTimeout(() => {
+            navigate(-1);
+          }, 2000);
+        } else {
+          toast.error('Failed to send request');
+        }
+      } catch (error) {
+        if (error.response) {
+          const errorMessage = error.response.data.message || 'An error occurred';
+          toast.error(errorMessage);
+        } else {
+          toast.error('Network or server error');
+        }
+        console.error('Error:', error);
       }
-    } catch (error) {
-      // Check if the error has a response and handle it
-      if (error.response) {
-        const errorMessage = error.response.data.message || 'An error occurred';
-        toast.error(errorMessage);
-      } else {
-        toast.error('Network or server error');
-      }
-      console.error('Error:', error);
     }
   };
-  const handleloginclick = async () => {
+
+  const handleloginclick = () => {
     navigate("/Login");
   };
+
   return (
     <>
-  
       <Grid container spacing={2}>
         {mdUp && (
           <Grid item md={6}>
@@ -113,8 +176,10 @@ function Registration() {
             />
           </Grid>
         )}
-        <Grid item xs={12} md={6}> 
-        <Typography style={{ marginLeft: '360px',marginTop:'120px', fontWeight: 'bold', fontSize: '35px' }}>SignUp Here!</Typography>
+        <Grid item xs={12} md={6}>
+          <Typography style={{ marginLeft: '360px', marginTop: '120px', fontWeight: 'bold', fontSize: '35px' }}>
+            SignUp Here!
+          </Typography>
           <form onSubmit={handleSubmit}>
             <FormGroup className={classes.formStyle}>
               <div className={classes.fieldStyle1}>
@@ -122,11 +187,12 @@ function Registration() {
                   <TextField
                     className={classes.fieldWidth}
                     id="outlined-basic"
-                    label="Name"
+                    label={errors.name ? errors.name : "Name"}
                     variant="outlined"
                     name="name"
                     onChange={handleChange}
                     required
+                    error={Boolean(errors.name)}
                   />
                 </FormControl>
                 <FormControl className={classes.fieldStyle}>
@@ -147,22 +213,24 @@ function Registration() {
                   <TextField
                     className={classes.fieldWidth}
                     id="outlined-basic"
-                    label="Email"
+                    label={errors.email ? errors.email : "Email"}
                     variant="outlined"
                     name="email"
                     onChange={handleChange}
                     required
+                    error={Boolean(errors.email)}
                   />
                 </FormControl>
                 <FormControl className={classes.fieldStyle}>
                   <TextField
                     className={classes.fieldWidth}
                     id="outlined-basic"
-                    label="Cnic"
+                    label={errors.cnic ? errors.cnic : "Cnic"}
                     variant="outlined"
                     name="cnic"
                     onChange={handleChange}
                     required
+                    error={Boolean(errors.cnic)}
                   />
                 </FormControl>
               </div>
@@ -176,9 +244,9 @@ function Registration() {
                   onChange={handleChange}
                   helperText="Please select the type of account"
                 >
-                  {accformat.map((accformat) => (
-                    <MenuItem key={accformat} value={accformat}>
-                      {accformat}
+                  {accformat.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -187,18 +255,21 @@ function Registration() {
               <FormControl className={classes.selectStyle}>
                 <TextField
                   className={classes.fieldWidth}
-                  label="Password"
+                  label={errors.password ? errors.password : "Password"}
                   name="password"
                   onChange={handleChange}
+                  type="password"
+                  error={Boolean(errors.password)}
                 />
               </FormControl>
 
               <FormControl className={classes.selectStyle}>
                 <TextField
                   className={classes.fieldWidth}
-                  label="Phone"
-                  name="phoneNumber"
+                  label={errors.phone ? errors.phone : "Phone"}
+                  name="phone"
                   onChange={handleChange}
+                  error={Boolean(errors.phone)}
                 />
               </FormControl>
 
@@ -231,17 +302,15 @@ function Registration() {
 
             </FormGroup>
             <Divider sx={{ my: 1, width: '50%', mx: 'auto' }}>
-  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-    OR
-  </Typography>
-</Divider>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                OR
+              </Typography>
+            </Divider>
 
-                <Typography variant="h5" gutterBottom sx={{
-                  ml:12
-                }}>
-                Already have an account?
-                <Button
-               onClick={handleloginclick}
+            <Typography variant="h5" gutterBottom sx={{ ml: 12 }}>
+              Already have an account?
+              <Button
+                onClick={handleloginclick}
                 variant="contained"
                 sx={{
                   mt: 0,
@@ -254,12 +323,14 @@ function Registration() {
               >
                 Login
               </Button>
-                </Typography>
+            </Typography>
           </form>
         </Grid>
       </Grid>
     </>
   );
 }
+
+
 
 export default Registration;
