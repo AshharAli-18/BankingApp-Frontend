@@ -66,20 +66,23 @@ export default function LoginForm() {
   const loggedInAdmin = useSelector(state => state.adminloginuser.admin);
 
   useEffect(() => {
+    console.log("Logged In customer is :", loggedInCustomer);
     if (loggedInCustomer && loggedInCustomer.loggedIn && loggedInCustomer.token) {
       if (values.role === 'user') {
         navigate('/customerlayout/customerdashboard');
-      } else {
-        alert('Invalid Credentials!');
-      }
+      } 
+      // else {
+      //   alert('Invalid Credentials!');
+      // }
     }
 
     if (loggedInAdmin && loggedInAdmin.loggedIn && loggedInAdmin.token) {
       if (values.role === 'admin') {
         navigate('/adminlayout/admindashboard');
-      } else {
-        alert('Invalid Credentials!');
       }
+      //  else {
+      //   alert('Invalid Credentials!');
+      // }
     }
   }, [loggedInCustomer, loggedInAdmin, values.role, navigate]);
 

@@ -116,7 +116,7 @@ function Registration() {
       tempErrors.phoneNumber = 'Phone number should not contain alphabets';
       valid = false;
     }else if (formData.phoneNumber.length < 10) {
-      tempErrors.phoneNumber = 'Password must be at least 10 characters long';
+      tempErrors.phoneNumber = 'Phone number must be at least 10 characters long';
       valid = false;
     } else {
       tempErrors.phoneNumber = '';
