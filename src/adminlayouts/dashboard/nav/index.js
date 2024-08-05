@@ -73,7 +73,7 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ flexGrow: 1 }} />
       
       {/* Logout button */}
-      <Box sx={{ mt: '200%',px: 2.5, pb: 3 }}>
+      <Box sx={{ mt: '180%',px: 2.5, pb: 3 }}>
         <Button variant="contained" fullWidth onClick={handleLogout} sx={{
           backgroundColor: '#e53935',
           '&:hover': {

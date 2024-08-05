@@ -7,6 +7,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 import InsightsIcon from '@mui/icons-material/Insights';
 import SvgColor from '../../../components/svg-color';
 import NewRequests from '../../../pages/NewRequests.js';
+import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
@@ -31,6 +32,11 @@ const navConfig = [
     title: 'New Requests',
     path: '/adminlayout/newrequests',
     icon: <GroupIcon/>,
+  },
+  {
+    title: 'Recently Deleted Accounts',
+    path: '/adminlayout/recentlydeletedaccounts',
+    icon: <PersonRemoveAlt1Icon/>,
   },
   
   {

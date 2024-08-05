@@ -22,6 +22,7 @@ import NotFound from './pages/Notfound';
 import TransactionsDetail from './pages/TransactionDetail';
 import Registration from './pages/Registration';
 import NewRequests from './pages/NewRequests.js';
+import RecentyDeletedAccounts from './pages/RecentlyDeletedAccounts.js';
 
 const theme = createTheme({
   palette: {
@@ -55,6 +56,7 @@ function App() {
             <Route path="transactiondetail/:transactionId" element={<TransactionsDetail />} />
             <Route path="editaccount/:accountId" element={<EditAccount />} />
             <Route path="newrequests" element={<NewRequests />} />
+            <Route path="recentlydeletedaccounts" element={<RecentyDeletedAccounts/>} />
           </Route>
           <Route path="customerlayout/*" element={<CustomerDashboardLayout />}>
             <Route path="customerdashboard" element={<CustomerDashboard />} />
