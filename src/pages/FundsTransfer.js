@@ -200,7 +200,8 @@ function FundsTransfer() {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          marginBottom: '20px',
+          marginTop: '30px',
+          marginBottom: '80px',
           marginLeft: '90px',
           marginRight: '90px',
         }}
@@ -284,6 +285,17 @@ function FundsTransfer() {
                     {purpose}
                   </MenuItem>
                 ))}
+              </TextField>
+            </FormControl>
+
+            <FormControl className={classes.selectStyle}>
+              <TextField
+                
+                label="Reference (Optional)"
+                name="reference"
+               
+              >
+                
               </TextField>
             </FormControl>
 
