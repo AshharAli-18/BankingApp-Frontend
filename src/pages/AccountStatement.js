@@ -41,7 +41,7 @@ const token = loggedInCustomer.token;
 
 const fetchAccountId = async (userId, token) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/getAccountByUserId/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/user/${userId}/account`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

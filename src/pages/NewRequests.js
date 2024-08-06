@@ -85,7 +85,7 @@ export default function CustomersManagement() {
   
       try {
         const createAccountResponse = await axios.post(
-          'http://localhost:8080/api/admin/createAccount',
+          'http://localhost:8080/api/account',
           result,
           {
             headers: {

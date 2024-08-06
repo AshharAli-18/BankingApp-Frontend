@@ -40,7 +40,7 @@ export default function CustomersManagement() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/getAllAccounts', {
+        const response = await fetch('http://localhost:8080/api/account', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ export default function CustomersManagement() {
     const confirmDelete = window.confirm("Are you sure you want to delete this record?");
     if (confirmDelete) {
       try {
-        const response = await fetch(`http://localhost:8080/api/admin/deleteAccount/${accountId}`, {
+        const response = await fetch(`http://localhost:8080/api/account/${accountId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,

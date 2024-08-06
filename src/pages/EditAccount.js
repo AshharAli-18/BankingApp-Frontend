@@ -66,7 +66,7 @@ function EditAccount() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/getAccount/${accountId}`, {
+        const response = await fetch(`http://localhost:8080/api/account/${accountId}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -113,13 +113,13 @@ function EditAccount() {
     }
 
     // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email)) {
-      tempErrors.email = 'Invalid Email Address';
-      valid = false;
-    } else {
-      tempErrors.email = '';
-    }
+    // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailPattern.test(formData.email)) {
+    //   tempErrors.email = 'Invalid Email Address';
+    //   valid = false;
+    // } else {
+    //   tempErrors.email = '';
+    // }
 
     // CNIC validation
     const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
@@ -159,7 +159,7 @@ function EditAccount() {
     event.preventDefault();
     if (validateForm()) {
       try {
-        const response = await fetch(`http://localhost:8080/api/admin/updateAccount/${accountId}`, {
+        const response = await fetch(`http://localhost:8080/api/account/${accountId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -242,11 +242,13 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="email"
-                  label={errors.email ? errors.email : "Email"}
+                  // label={errors.email ? errors.email : "Email"}
+                  label="Email"
                   value={formData.email}
+                  type="email"
                   onChange={handleChange}
                   required
-                  error={Boolean(errors.email)}
+                  // error={Boolean(errors.email)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
