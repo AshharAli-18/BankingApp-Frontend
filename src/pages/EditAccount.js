@@ -242,13 +242,11 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="email"
-                  // label={errors.email ? errors.email : "Email"}
                   label="Email"
                   value={formData.email}
-                  type="email"
                   onChange={handleChange}
                   required
-                  // error={Boolean(errors.email)}
+                  inputProps={{ pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
