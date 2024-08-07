@@ -118,7 +118,7 @@ export default function CustomerDashboard() {
         <title> Admin Dashboard </title>
       </Helmet> */}
 
-      <Container maxWidth="xl" >
+      <Container maxWidth="xl"  data-testid="customer-dashboard-component">
       <Typography variant="h5" sx={{ mb: 5 }}>
           <strong>Welcome <span style={{ color: 'grey' }}>{data.user?.name}</span> to the Customer Dashboard</strong>
         </Typography>

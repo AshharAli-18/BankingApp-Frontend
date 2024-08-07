@@ -105,21 +105,21 @@ function EditAccount() {
     let tempErrors = { ...errors };
 
     // Name validation
-    if (/\d/.test(formData.name)) {
-      tempErrors.name = 'Invalid Name';
-      valid = false;
-    } else {
-      tempErrors.name = '';
-    }
-
-    // Email validation
-    // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailPattern.test(formData.email)) {
-    //   tempErrors.email = 'Invalid Email Address';
+    // if (/\d/.test(formData.name)) {
+    //   tempErrors.name = 'Invalid Name';
     //   valid = false;
     // } else {
-    //   tempErrors.email = '';
+    //   tempErrors.name = '';
     // }
+
+   // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      tempErrors.email = 'Invalid Email Address';
+      valid = false;
+    } else {
+      tempErrors.email = '';
+    }
 
     // CNIC validation
     const cnicPattern = /^\d{5}-\d{7}-\d{1}$/;
@@ -220,7 +220,10 @@ function EditAccount() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  error={Boolean(errors.name)}
+                  // error={Boolean(errors.name)}
+                  inputProps={{
+                    pattern: "[A-Za-z ]+",
+                  }}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -242,11 +245,12 @@ function EditAccount() {
                   id="outlined-basic"
                   variant="outlined"
                   name="email"
-                  label="Email"
+                  label={errors.email ? errors.email : "Email"}
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  inputProps={{ pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }}
+                  type='email'
+                  // error={Boolean(errors.email)}
                 />
               </FormControl>
               <FormControl className={classes.fieldStyle}>
@@ -282,7 +286,7 @@ function EditAccount() {
 
             <div className={classes.fieldStyle1}>
               <FormControl className={classes.fieldStyle}>
-                <TextField
+              <TextField
                   id="outlined-basic"
                   variant="outlined"
                   name="cnic"
@@ -291,7 +295,11 @@ function EditAccount() {
                   onChange={handleChange}
                   required
                   error={Boolean(errors.cnic)}
+                  inputProps={{
+                    pattern: "^\\d{5}-\\d{7}-\\d{1}$",
+                  }}
                 />
+
               </FormControl>
               <FormControl className={classes.fieldStyle}>
                 <TextField

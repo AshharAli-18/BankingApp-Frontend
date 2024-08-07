@@ -288,6 +288,7 @@ function Registration() {
               </FormControl>
 
               <Button
+              id="signup-button"
                 type="submit"
                 variant="contained"
                 sx={{
