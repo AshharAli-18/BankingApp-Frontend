@@ -132,7 +132,7 @@ function Registration() {
       console.log("Formdata is:", formData);
       try {
         const response = await axios.post(
-          'http://localhost:8080/api/auth/customerRequest',
+          'http://localhost:8081/api/auth/customerRequest',
           formData
         );
   

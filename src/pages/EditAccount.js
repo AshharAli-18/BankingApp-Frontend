@@ -159,7 +159,7 @@ function EditAccount() {
     event.preventDefault();
     if (validateForm()) {
       try {
-        const response = await fetch(`http://localhost:8080/api/account/${accountId}`, {
+        const response = await fetch(`http://localhost:8081/api/account/${accountId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,

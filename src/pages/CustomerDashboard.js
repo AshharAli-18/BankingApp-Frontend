@@ -57,7 +57,7 @@ export default function CustomerDashboard() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/user/${userId}/account`, { // Corrected spelling here
+        const response = await fetch(`http://localhost:8081/api/user/${userId}/account`, { // Corrected spelling here
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

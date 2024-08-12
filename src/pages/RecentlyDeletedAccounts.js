@@ -40,7 +40,7 @@ export default function RecentyDeletedAccounts() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/getAllDeletedAccounts', {
+        const response = await fetch('http://localhost:8081/api/getAllDeletedAccounts', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ export default function RecentyDeletedAccounts() {
     const confirmDelete = window.confirm("Are you sure you want to permanently delete this record?");
     if (confirmDelete) {
       try {
-        const response = await fetch(`http://localhost:8080/api/admin/permanentAccountDelete/${accountId}`, {
+        const response = await fetch(`http://localhost:8081/api/admin/permanentAccountDelete/${accountId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,

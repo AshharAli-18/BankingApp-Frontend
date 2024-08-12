@@ -85,7 +85,7 @@ export default function CustomersManagement() {
   
       try {
         const createAccountResponse = await axios.post(
-          'http://localhost:8080/api/account',
+          'http://localhost:8081/api/account',
           result,
           {
             headers: {
@@ -121,7 +121,7 @@ export default function CustomersManagement() {
     const confirmDelete = window.confirm("Are you sure you want to delete this record?");
     if (confirmDelete) {
       try {
-        const response = await fetch(`http://localhost:8080/api/deleteRequest/${id}`, {
+        const response = await fetch(`http://localhost:8081/api/deleteRequest/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -146,7 +146,7 @@ export default function CustomersManagement() {
   const handleRequestAcceptDelete = async (id) => {
   
       try {
-        const response = await fetch(`http://localhost:8080/api/deleteRequest/${id}`, {
+        const response = await fetch(`http://localhost:8081/api/deleteRequest/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,

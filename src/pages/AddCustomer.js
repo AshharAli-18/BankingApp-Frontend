@@ -148,7 +148,7 @@ function AddCustomer() {
       console.log("FormData is :", formData);
       try {
         const response = await axios.post(
-          'http://localhost:8080/api/account',
+          'http://localhost:8081/api/account',
           formData,
           {
             headers: {
